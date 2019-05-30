@@ -2,44 +2,56 @@ package com.ctrip.framework.apollo.metaservice.service;
 
 import com.ctrip.framework.apollo.core.ServiceNameConsts;
 import com.ctrip.framework.apollo.tracer.Tracer;
-import com.netflix.appinfo.InstanceInfo;
-import com.netflix.discovery.EurekaClient;
-import com.netflix.discovery.shared.Application;
+import com.ecwid.consul.v1.ConsulClient;
+import com.ecwid.consul.v1.Response;
+import com.ecwid.consul.v1.agent.AgentClient;
+import com.ecwid.consul.v1.agent.model.Check;
+import com.ecwid.consul.v1.kv.model.GetValue;
+import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DiscoveryService {
 
-  private final EurekaClient eurekaClient;
+    private final AgentClient agentClient;
 
-  public DiscoveryService(final EurekaClient eurekaClient) {
-    this.eurekaClient = eurekaClient;
-  }
-
-  public List<InstanceInfo> getConfigServiceInstances() {
-    Application application = eurekaClient.getApplication(ServiceNameConsts.APOLLO_CONFIGSERVICE);
-    if (application == null) {
-      Tracer.logEvent("Apollo.EurekaDiscovery.NotFound", ServiceNameConsts.APOLLO_CONFIGSERVICE);
+    public DiscoveryService(final AgentClient agentClient) {
+        this.agentClient = agentClient;
     }
-    return application != null ? application.getInstances() : Collections.emptyList();
-  }
 
-  public List<InstanceInfo> getMetaServiceInstances() {
-    Application application = eurekaClient.getApplication(ServiceNameConsts.APOLLO_METASERVICE);
-    if (application == null) {
-      Tracer.logEvent("Apollo.EurekaDiscovery.NotFound", ServiceNameConsts.APOLLO_METASERVICE);
+    public Check getConfigServiceInstances() {
+        Check check = this.getNodeDate(ServiceNameConsts.APOLLO_CONFIGSERVICE);
+        if (check.getName() == null) {
+            Tracer.logEvent("Apollo.ConsulDiscovery.NotFound", ServiceNameConsts.APOLLO_CONFIGSERVICE);
+        }
+        return check;
     }
-    return application != null ? application.getInstances() : Collections.emptyList();
-  }
 
-  public List<InstanceInfo> getAdminServiceInstances() {
-    Application application = eurekaClient.getApplication(ServiceNameConsts.APOLLO_ADMINSERVICE);
-    if (application == null) {
-      Tracer.logEvent("Apollo.EurekaDiscovery.NotFound", ServiceNameConsts.APOLLO_ADMINSERVICE);
+    public Check getMetaServiceInstances() {
+        Check check = this.getNodeDate(ServiceNameConsts.APOLLO_METASERVICE);
+        if (check.getName() == null) {
+            Tracer.logEvent("Apollo.ConsulDiscovery.NotFound", ServiceNameConsts.APOLLO_METASERVICE);
+        }
+        return check;
     }
-    return application != null ? application.getInstances() : Collections.emptyList();
-  }
+
+    public Check getAdminServiceInstances() {
+        Check check = this.getNodeDate(ServiceNameConsts.APOLLO_ADMINSERVICE);
+        if (check.getName() == null) {
+            Tracer.logEvent("Apollo.ConsulDiscovery.NotFound", ServiceNameConsts.APOLLO_ADMINSERVICE);
+        }
+        return check;
+    }
+
+    private Check getNodeDate(String name) {
+        Response<Map<String, Check>> checks = agentClient.getAgentChecks();
+        if (checks == null) {
+            return new Check();
+        }
+        return checks.getValue().get("service:" + name);
+    }
 }
