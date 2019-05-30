@@ -13,19 +13,19 @@
 #      enabled: true
 #    eurekaServiceUrlPollIntervalSeconds: 60
 #
-#management:
-#  health:
-#    status:
-#      order: DOWN, OUT_OF_SERVICE, UNKNOWN, UP
+management:
+  health:
+    status:
+      order: DOWN, OUT_OF_SERVICE, UNKNOWN, UP
 spring:
   cloud:
     consul:
       host: 192.168.11.178
       port: 8500
       discovery:
-        hostname: ${hostname:localhost}
-        port: 8080
-        health-check-interval: 15s
+        hostname: 192.168.20.82
+        port: 8090
+        health-check-interval: 60s
         health-check-path: /health
-        instance-id: ${spring.application.name}
+        instance-id: apollo-adminservice
 
