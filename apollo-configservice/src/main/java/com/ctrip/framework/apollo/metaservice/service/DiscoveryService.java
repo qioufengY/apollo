@@ -4,8 +4,12 @@ import com.ctrip.framework.apollo.core.ServiceNameConsts;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ecwid.consul.v1.Response;
 import com.ecwid.consul.v1.agent.AgentClient;
+import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -17,35 +21,41 @@ public class DiscoveryService {
         this.agentClient = agentClient;
     }
 
-    public com.ecwid.consul.v1.agent.model.Service getConfigServiceInstances() {
-        com.ecwid.consul.v1.agent.model.Service service = this.getNodeDate(ServiceNameConsts.APOLLO_CONFIGSERVICE);
-        if (service.getId() == null) {
+    public List<com.ecwid.consul.v1.agent.model.Service> getConfigServiceInstances() {
+        List<com.ecwid.consul.v1.agent.model.Service> list = this.getNodeDate(ServiceNameConsts.APOLLO_CONFIGSERVICE);
+        if (CollectionUtils.isEmpty(list)) {
             Tracer.logEvent("Apollo.ConsulDiscovery.NotFound", ServiceNameConsts.APOLLO_CONFIGSERVICE);
         }
-        return service;
+        return list;
     }
 
-    public com.ecwid.consul.v1.agent.model.Service getMetaServiceInstances() {
-        com.ecwid.consul.v1.agent.model.Service service = this.getNodeDate(ServiceNameConsts.APOLLO_METASERVICE);
-        if (service.getId() == null) {
-            Tracer.logEvent("Apollo.ConsulDiscovery.NotFound", ServiceNameConsts.APOLLO_METASERVICE);
+    public List<com.ecwid.consul.v1.agent.model.Service> getMetaServiceInstances() {
+        List<com.ecwid.consul.v1.agent.model.Service> list = this.getNodeDate(ServiceNameConsts.APOLLO_METASERVICE);
+        if (CollectionUtils.isEmpty(list)) {
+            Tracer.logEvent("Apollo.ConsulDiscovery.NotFound", ServiceNameConsts.APOLLO_CONFIGSERVICE);
         }
-        return service;
+        return list;
     }
 
-    public com.ecwid.consul.v1.agent.model.Service getAdminServiceInstances() {
-        com.ecwid.consul.v1.agent.model.Service service = this.getNodeDate(ServiceNameConsts.APOLLO_ADMINSERVICE);
-        if (service.getId() == null) {
-            Tracer.logEvent("Apollo.ConsulDiscovery.NotFound", ServiceNameConsts.APOLLO_ADMINSERVICE);
+    public List<com.ecwid.consul.v1.agent.model.Service> getAdminServiceInstances() {
+        List<com.ecwid.consul.v1.agent.model.Service> list = this.getNodeDate(ServiceNameConsts.APOLLO_ADMINSERVICE);
+        if (CollectionUtils.isEmpty(list)) {
+            Tracer.logEvent("Apollo.ConsulDiscovery.NotFound", ServiceNameConsts.APOLLO_CONFIGSERVICE);
         }
-        return service;
+        return list;
     }
 
-    private com.ecwid.consul.v1.agent.model.Service getNodeDate(String name) {
-        Response<Map<String, com.ecwid.consul.v1.agent.model.Service>> services = agentClient.getAgentServices();
-        if (services == null) {
-            return new com.ecwid.consul.v1.agent.model.Service();
+    private List<com.ecwid.consul.v1.agent.model.Service> getNodeDate(String name) {
+        Response<Map<String, com.ecwid.consul.v1.agent.model.Service>> response = agentClient.getAgentServices();
+        if (response == null || response.getValue() == null) {
+            return Collections.emptyList();
         }
-        return services.getValue().get(name);
+        List<com.ecwid.consul.v1.agent.model.Service> list = Lists.newArrayList();
+        response.getValue().forEach((key, value) -> {
+            if (key.startsWith(name)) {
+                list.add(value);
+            }
+        });
+        return list;
     }
 }

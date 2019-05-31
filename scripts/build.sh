@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # apollo config db info
-apollo_config_db_url=jdbc:mysql://192.168.11.175:3306/ApolloConfigDB?characterEncoding=utf8
+apollo_config_db_url=jdbc:mysql://192.168.11.95:3306/ApolloConfigDB?characterEncoding=utf8
 apollo_config_db_username=root
-apollo_config_db_password=123456
+apollo_config_db_password=yWC^W^vt7ek!EI&9
 
 # apollo portal db info
 apollo_portal_db_url=jdbc:mysql://192.168.11.203:3309/ApolloPortalDB?characterEncoding=utf8

@@ -23,9 +23,9 @@ spring:
       host: 192.168.11.178
       port: 8500
       discovery:
-        hostname: 192.168.20.82
-        port: 8090
+        hostname: 192.168.11.216
+        port: 9002
         health-check-interval: 60s
         health-check-path: /health
-        instance-id: apollo-adminservice
+        instance-id: ${spring.application.name}-${spring.cloud.consul.host}-${spring.cloud.consul.port}
 

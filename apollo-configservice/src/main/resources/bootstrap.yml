@@ -22,13 +22,15 @@ management:
       order: DOWN, OUT_OF_SERVICE, UNKNOWN, UP
 
 spring:
+  application:
+    name: apollo-configservice
   cloud:
     consul:
       host: 192.168.11.178
       port: 8500
       discovery:
-        hostname: 192.168.20.82
-        port: 8080
+        hostname: 192.168.11.216
+        port: 9001
         health-check-interval: 60s
         health-check-path: /health
-        instance-id: apollo-configservice
+        instance-id: ${spring.application.name}-${spring.cloud.consul.host}-${spring.cloud.consul.port}
