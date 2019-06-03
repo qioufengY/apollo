@@ -29,8 +29,8 @@ spring:
       host: 192.168.11.178
       port: 8500
       discovery:
-        hostname: 192.168.11.216
+        hostname: 192.168.15.184
         port: 9001
         health-check-interval: 60s
         health-check-path: /health
-        instance-id: ${spring.application.name}-${spring.cloud.consul.host}-${spring.cloud.consul.port}
+        instance-id: ${spring.application.name}-${spring.cloud.consul.discovery.hostname}-${spring.cloud.consul.discovery.port}
