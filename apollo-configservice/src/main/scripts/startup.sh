@@ -3,7 +3,7 @@ SERVICE_NAME=apollo-configservice
 ## Adjust log dir if necessary
 LOG_DIR=/opt/logs/100003171
 ## Adjust server port if necessary
-SERVER_PORT=8080
+SERVER_PORT=9001
 
 ## Create log directory if not existed because JDK 8+ won't do that
 mkdir -p $LOG_DIR

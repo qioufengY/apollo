@@ -1,6 +1,6 @@
 spring:
   application:
-    name: apollo-adminservice
+    name: apollo-adminservice-fat
   profiles:
     active: ${apollo_profile}
 

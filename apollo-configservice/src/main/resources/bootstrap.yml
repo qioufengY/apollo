@@ -23,14 +23,14 @@ management:
 
 spring:
   application:
-    name: apollo-configservice
+    name: apollo-configservice-fat
   cloud:
     consul:
       host: 192.168.11.178
       port: 8500
       discovery:
-        hostname: 192.168.15.184
+        hostname: 192.168.11.216
         port: 9001
         health-check-interval: 60s
         health-check-path: /health
-        instance-id: ${spring.application.name}-${spring.cloud.consul.discovery.hostname}-${spring.cloud.consul.discovery.port}
+        instance-id: ${spring.application.name}-fat-${spring.cloud.consul.discovery.hostname}-${spring.cloud.consul.discovery.port}
