@@ -27,5 +27,5 @@ spring:
         port: 9002
         health-check-interval: 60s
         health-check-path: /health
-        instance-id: ${spring.application.name}-fat-${spring.cloud.consul.discovery.hostname}-${spring.cloud.consul.discovery.port}
+        instance-id: ${spring.application.name}-${spring.cloud.consul.discovery.hostname}-${spring.cloud.consul.discovery.port}
 
